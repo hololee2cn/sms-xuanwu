@@ -1,0 +1,264 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/sms.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Sender"
+    },
+    {
+      "name": "Log"
+    },
+    {
+      "name": "State"
+    },
+    {
+      "name": "Callback"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/callback": {
+      "post": {
+        "summary": "The greeting service definition.",
+        "operationId": "Callback_RecvCallback",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CallbackResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CallbackRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Callback"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "CallbackRequest": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "dataList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CallbackRequestDataList"
+          }
+        }
+      }
+    },
+    "CallbackRequestDataList": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "reserve": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "msgID": {
+          "type": "string"
+        },
+        "customMsgID": {
+          "type": "string"
+        },
+        "state": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "submitTime": {
+          "type": "string"
+        },
+        "originResult": {
+          "type": "string"
+        },
+        "doneTime": {
+          "type": "string"
+        }
+      }
+    },
+    "CallbackResponse": {
+      "type": "object"
+    },
+    "ListContentsResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mails": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SmsContent"
+          }
+        }
+      }
+    },
+    "ListStateResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "state": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SmsState"
+          }
+        }
+      }
+    },
+    "SendMsgRequestItem": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "string"
+        },
+        "messageID": {
+          "type": "string"
+        }
+      }
+    },
+    "SendMsgResponse": {
+      "type": "object",
+      "properties": {
+        "batchID": {
+          "type": "string"
+        }
+      }
+    },
+    "SmsContent": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "batchID": {
+          "type": "string"
+        },
+        "sendMessageID": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "SmsState": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "string"
+        },
+        "batchID": {
+          "type": "string"
+        },
+        "sendMessageID": {
+          "type": "string"
+        },
+        "RecvMessageID": {
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/definitions/SmsStateState"
+        },
+        "submitTime": {
+          "type": "string",
+          "format": "int64"
+        },
+        "downTime": {
+          "type": "string",
+          "format": "int64"
+        },
+        "originResult": {
+          "type": "string"
+        }
+      }
+    },
+    "SmsStateState": {
+      "type": "string",
+      "enum": [
+        "delivered",
+        "expired",
+        "undeliverable",
+        "rejected",
+        "unknown",
+        "deleted"
+      ],
+      "default": "delivered"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

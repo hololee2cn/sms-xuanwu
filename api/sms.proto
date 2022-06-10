@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+option go_package = "pkg/grpcIFace";
+service Sender {
+  rpc SendMessage (SendMsgRequest) returns (SendMsgResponse) {
+  }
+}
+
+message SendMsgRequest {
+  message Item {
+    string to = 1;
+    string messageID = 2;
+  }
+  repeated Item items = 1;
+  string sender = 2;
+  string content = 3;
+}
+message SendMsgError {
+  string code = 1;
+  string message = 2;
+}
+message SendMsgResponse {
+  string batchID = 1;
+}
+service Log {
+  rpc ListLogsByID (ListByIDRequest) returns (ListContentsResponse) {
+  }
+  rpc ListLogsByTime (ListByTimeRequest) returns (ListContentsResponse) {
+  }
+}
+service State {
+  rpc ListStateByID (ListByIDRequest) returns (ListStateResponse) {
+  }
+  rpc ListStateByTime (ListByTimeRequest) returns (ListStateResponse) {
+  }
+}
+
+message ListByIDRequest {
+  string ID = 1;
+}
+message ListByTimeRequest {
+  //均为timestamp
+  int64 timeBegin = 1; //若未设置则默认为结束时间前2小时
+  int64 timeEnd = 2; //若为设置默认为当前时间
+}
+message SmsContent {
+  string sender = 1;
+  string to = 2;
+  string batchID = 3;
+  string sendMessageID = 4;
+  string content = 5;
+  int64 time = 6;
+}
+message ListContentsResponse {
+  int32 total = 1;
+  repeated SmsContent mails = 2;
+}
+
+message SmsState {
+  enum State {
+    delivered = 0;
+    expired = 1;
+    undeliverable = 2;
+    rejected = 3;
+    unknown = 4;
+    deleted = 5;
+  }
+  string to = 1;
+  string batchID = 2;
+  string sendMessageID = 3;
+  string RecvMessageID = 4;
+  State state = 5;
+  int64 submitTime = 6;
+  int64 downTime = 7;
+  string originResult = 8;
+}
+message ListStateResponse {
+  int32 total = 1;
+  repeated SmsState state = 2;
+}
+service Callback {
+  // The greeting service definition.
+  rpc RecvCallback (CallbackRequest) returns (CallbackResponse) {
+    option (google.api.http) = {
+      post: "/callback"
+      body: "*"
+    };
+  }
+}
+
+
+message CallbackRequest {
+  int32 total = 1;
+  string type = 2;
+
+  message DataList {
+    string phone = 1;
+    string reserve = 2;
+    string uuid = 3;
+    string msgID = 4;
+    string customMsgID = 5;
+    int32 state = 6;
+    string submitTime = 7;
+    string originResult = 8;
+    string doneTime = 9;
+  }
+  repeated DataList dataList = 3;
+}
+message CallbackResponse {
+}
